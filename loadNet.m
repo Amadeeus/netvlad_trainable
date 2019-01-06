@@ -10,12 +10,20 @@ function net= loadNet(netID, layerName)
             netname= 'imagenet-caffe-ref.mat';
         case 'places'
             netname= 'places-caffe.mat';
+        case 'vd16_pitts30k'
+            netname= 'vd16_pitts30k_conv5_3_vlad_preL2_intra_white.mat';
         otherwise
             error( 'Unknown network ID', netID );
     end
     
     paths= localPaths();
-    net= load( fullfile(paths.pretrainedCNNs, netname));
+    if strcmp(netID, 'vd16_pitts30k')
+        net= load( sprintf('%s%s', paths.pretrainedCNNs, netname), 'net');
+        net= net.net
+        %net= load( fullfile(paths.pretrainedCNNs, netname), 'net');
+    else
+        net= load( fullfile(paths.pretrainedCNNs, netname));
+    end
     
     net= vl_simplenn_tidy(net); % matconvnet beta17 or newer is needed
     
